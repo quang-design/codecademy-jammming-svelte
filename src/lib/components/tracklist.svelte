@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Track from './track.svelte';
-	import type { TrackProps } from '$lib/spotify/mock.svelte';
+	import type { TrackProps } from '$lib/spotify/spotify.svelte';
 
 	interface TracklistProps {
 		tracks: TrackProps[];

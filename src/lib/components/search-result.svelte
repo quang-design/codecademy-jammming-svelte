@@ -1,6 +1,6 @@
 <script lang="ts">
 	import TrackList from './tracklist.svelte';
-	import { searchResult } from '$lib/spotify/mock.svelte';
+	import { searchResult } from '$lib/spotify/spotify.svelte';
 </script>
 
 <div class="rounded-xl border border-purple-800 bg-purple-950 p-4">
