@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { TrackProps } from '$lib/spotify/spotify.svelte';
-	import { playlist, searchResult } from '$lib/spotify/spotify.svelte';
+	import type { TrackProps } from '$lib/utils/user-state.svelte';
+	import { playlist, searchResult } from '$lib/utils/user-state.svelte';
 
 	let { track, isPlaylist }: { track: TrackProps; isPlaylist?: boolean } = $props();
 

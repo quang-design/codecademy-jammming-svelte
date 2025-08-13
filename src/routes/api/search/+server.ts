@@ -1,17 +1,14 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { SPOTIFY_CLIENT_SECRET } from '$env/static/private';
+import { spotify } from '$lib/utils/spotify.svelte';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const query = url.searchParams.get('query');
 
-	const response = await fetch(`https://api.spotify.com/v1/search?q=${query}&type=track&limit=10`, {
-		method: 'GET',
-		headers: {
-			Authorization: `Bearer ${SPOTIFY_CLIENT_SECRET}`,
-			'Content-Type': 'application/json'
-		}
-	});
-	const data = await response.json();
+	if (!query) {
+		return json({ error: 'Missing query parameter' }, { status: 400 });
+	}
+
+	const data = await spotify.searchTracks(query);
 	return json(data);
 };

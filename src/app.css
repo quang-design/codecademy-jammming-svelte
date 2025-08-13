@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 body {
-	@apply bg-[url('background_photo_desktop.jpg')] bg-cover bg-center bg-no-repeat;
+	@apply bg-[url('/background_photo_desktop.jpg')] bg-cover bg-center bg-no-repeat;
 }
 
 h1 {

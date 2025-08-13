@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Tracklist from './tracklist.svelte';
-	import { playlist } from '$lib/spotify/spotify.svelte';
+	import { playlist } from '$lib/utils/user-state.svelte';
+
+	$inspect(playlist.getPlaylist(), 'Playlist');
 </script>
 
 <div class="flex flex-col gap-2 rounded-xl border border-purple-800 bg-purple-950 p-4">

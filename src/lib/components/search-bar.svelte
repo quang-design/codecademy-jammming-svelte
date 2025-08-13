@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { searchResult } from '$lib/utils/user-state.svelte';
 	let query = $state('');
 
 	const onsubmit = async (e: SubmitEvent) => {
 		e.preventDefault();
 		const response = await fetch(`/api/search?query=${query}`);
 		const data = await response.json();
-		console.log(data);
+		searchResult.updateSearchResult(data);
 	};
 </script>
 

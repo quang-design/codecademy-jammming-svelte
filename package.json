@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"spotify": "npx vite-node --options.transformMode.ssr='/.*/' src/lib/utils/spotify.svelte.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -33,5 +34,8 @@
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
 		"vite": "^7.0.4"
+	},
+	"dependencies": {
+		"spotify-types": "^1.0.7"
 	}
 }
