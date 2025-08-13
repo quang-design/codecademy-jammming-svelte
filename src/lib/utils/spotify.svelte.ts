@@ -85,9 +85,8 @@ class Spotify {
 			throw error;
 		}
 	}
+
+	public async saveToPlaylist(tracks: TrackProps[]) {}
 }
 
 export const spotify = new Spotify();
-
-spotify.getAccessToken();
-spotify.searchTracks('meow').then((tracks) => console.log(tracks));
