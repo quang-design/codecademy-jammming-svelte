@@ -5,18 +5,22 @@
 
 	let { userId } = $props();
 
+	let playlistName = $state('Playlist');
+	let isRenaming = $state(false);
+
 	const playlistTracks = $derived(playlist.getPlaylist());
 
+	const toggleRename = () => {
+		isRenaming = !isRenaming;
+	};
+
 	const onclick = async () => {
-		if (!userId) {
-			goto('/api/login');
-		}
-		// const response = await fetch('/api/save', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify({ playlist: playlistTracks })
-		// });
-		// const data = await response.json();
-		// console.log(data);
+		const response = await fetch('/api/save', {
+			method: 'POST',
+			body: JSON.stringify({ playlist: playlistTracks, playlistName: playlistName })
+		});
+		const data = await response.json();
+		console.log(data);
 	};
 </script>
 
@@ -25,7 +29,30 @@
 >
 	<div class="flex flex-col gap-2">
 		<p class="text-xs text-purple-300 uppercase">Playlist Name</p>
-		<h2 class="text-white">Playlist</h2>
+
+		<div class="flex items-center justify-between gap-2">
+			{#if isRenaming}
+				<h2
+					class="w-full border-b border-purple-600 text-white"
+					bind:textContent={playlistName}
+					contenteditable="true"
+					onkeydown={(e) => {
+						if (e.key === 'Enter') {
+							toggleRename();
+						}
+					}}
+				>
+					{playlistName}
+				</h2>
+				{@render renameButton('Done', toggleRename)}
+			{:else}
+				<h2 class="text-white" bind:textContent={playlistName} contenteditable="false">
+					{playlistName}
+				</h2>
+				{@render renameButton('Rename', toggleRename)}
+			{/if}
+		</div>
+
 		{#if playlistTracks.length > 0}
 			<Tracklist tracks={playlistTracks} isPlaylist={true} />
 		{:else}
@@ -40,3 +67,12 @@
 		Save to Playlist
 	</button>
 </div>
+
+{#snippet renameButton(text: string, onclick: () => void)}
+	<button
+		{onclick}
+		class="cursor-pointer text-purple-200/75 underline decoration-[0.5px] underline-offset-3 hover:text-purple-200"
+	>
+		{text}
+	</button>
+{/snippet}

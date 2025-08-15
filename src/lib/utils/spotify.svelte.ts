@@ -86,6 +86,24 @@ class Spotify {
 		}
 	}
 
+	public async getCurrentUserProfile() {
+		const accessToken = await this.getAccessToken();
+
+		try {
+			const response = await fetch('https://api.spotify.com/v1/me', {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
+			});
+
+			const data = await response.json();
+			return data;
+		} catch (error) {
+			console.error('Error getting Spotify user profile:', error);
+			throw error;
+		}
+	}
+
 	public async saveToPlaylist(tracks: TrackProps[]) {}
 }
 
