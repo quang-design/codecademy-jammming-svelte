@@ -92,7 +92,7 @@
 	</div>
 	<button
 		class="rounded-full border border-purple-600 bg-purple-900 p-4 text-white transition-all duration-150 hover:bg-purple-800 active:scale-99 disabled:opacity-50"
-		on:click={onclick}
+		{onclick}
 		disabled={playlistTracks.length === 0}
 	>
 		Save to Playlist
@@ -101,7 +101,7 @@
 
 {#snippet renameButton(text: string, onclick: () => void)}
 	<button
-		on:click={onclick}
+		{onclick}
 		class="cursor-pointer text-purple-200/75 underline decoration-[0.5px] underline-offset-3 hover:text-purple-200"
 	>
 		{text}
