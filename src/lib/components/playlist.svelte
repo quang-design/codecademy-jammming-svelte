@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Tracklist from './tracklist.svelte';
 	import { playlist } from '$lib/utils/user-state.svelte';
-	import { PUBLIC_SPOTIFY_CLIENT_ID, PUBLIC_SPOTIFY_REDIRECT_URI } from '$env/static/public';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+
+	let { userId, isAuthenticated } = $props();
 
 	let playlistName = $state('Playlist');
 	let isRenaming = $state(false);
@@ -14,14 +14,30 @@
 		isRenaming = !isRenaming;
 	};
 
-	const onclick = () => {
-		const cookies = document.cookie;
-		if (cookies.includes('spotify_access_token')) {
-			console.log('access token found');
+	const onclick = async () => {
+		if (!isAuthenticated) {
+			goto('/api/login');
 			return;
 		}
 
-		goto('/api/login');
+		const response = await fetch('/api/save', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				userId,
+				playlistName,
+				tracks: playlistTracks
+			})
+		});
+
+		const { snapshotId } = await response.json();
+
+		if (snapshotId) {
+			console.log(snapshotId);
+			alert('Playlist saved successfully');
+		}
 	};
 </script>
 
@@ -60,16 +76,10 @@
 			<p class="text-purple-200">No tracks found</p>
 		{/if}
 	</div>
-	<!-- <button
-		class="rounded-full border border-purple-600 bg-purple-900 p-4 text-white transition-all duration-150 hover:bg-purple-800 active:scale-99 disabled:opacity-50"
-		{onclick}
-		disabled={playlistTracks.length === 0}
-	>
-		Save to Playlist
-	</button> -->
 	<button
 		class="rounded-full border border-purple-600 bg-purple-900 p-4 text-white transition-all duration-150 hover:bg-purple-800 active:scale-99 disabled:opacity-50"
 		{onclick}
+		disabled={playlistTracks.length === 0}
 	>
 		Save to Playlist
 	</button>

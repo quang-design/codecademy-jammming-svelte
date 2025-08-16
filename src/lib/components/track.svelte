@@ -7,10 +7,12 @@
 	const onadd = (track: TrackProps) => {
 		playlist.addTrack(track);
 		searchResult.removeTrack(track);
+		localStorage.setItem('playlist', JSON.stringify(playlist.getPlaylist()));
 	};
 
 	const onremove = (track: TrackProps) => {
 		playlist.removeTrack(track);
+		localStorage.setItem('playlist', JSON.stringify(playlist.getPlaylist()));
 	};
 </script>
 

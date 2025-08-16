@@ -1,5 +1,5 @@
 # TODO
 
 - [ ] Add playlist to local storage
-- [ ] Add "Save to Playlist" button
-- [ ] Add Spotify login
+- [x] Add "Save to Playlist" button
+- [x] Add Spotify login

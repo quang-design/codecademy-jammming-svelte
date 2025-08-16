@@ -111,6 +111,53 @@ class Spotify {
 			throw error;
 		}
 	}
+
+	public async createPlaylist(userId: string, playlistName: string) {
+		const accessToken = await this.getAccessToken();
+
+		try {
+			const response = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				},
+				body: JSON.stringify({
+					name: playlistName,
+					public: false
+				})
+			});
+
+			const { id: playlistId } = await response.json();
+
+			return playlistId;
+		} catch (error) {
+			console.error('Error creating playlist:', error);
+			throw error;
+		}
+	}
+
+	public async addItemsToPlaylist(playlistId: string, tracks: string[]) {
+		const accessToken = await this.getAccessToken();
+
+		const formattedTracks = tracks.map((track) => `spotify:track:${track}`);
+
+		try {
+			const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				},
+				body: JSON.stringify({
+					uris: formattedTracks
+				})
+			});
+
+			const { snapshot_id } = await response.json();
+
+			return snapshot_id;
+		} catch (error) {
+			console.error('Error adding items to playlist:', error);
+			throw error;
+		}
+	}
 }
 
 export const spotify = new Spotify();
