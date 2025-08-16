@@ -112,13 +112,13 @@ class Spotify {
 		}
 	}
 
-	public async createPlaylist(userId: string, playlistName: string) {
-		const accessToken = await this.getAccessToken();
-
+	public async createPlaylist(accessToken: string, userId: string, playlistName: string) {
 		try {
 			const response = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+				method: 'POST',
 				headers: {
-					Authorization: `Bearer ${accessToken}`
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					name: playlistName,
@@ -135,15 +135,15 @@ class Spotify {
 		}
 	}
 
-	public async addItemsToPlaylist(playlistId: string, tracks: string[]) {
-		const accessToken = await this.getAccessToken();
-
+	public async addItemsToPlaylist(accessToken: string, playlistId: string, tracks: string[]) {
 		const formattedTracks = tracks.map((track) => `spotify:track:${track}`);
 
 		try {
 			const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+				method: 'POST',
 				headers: {
-					Authorization: `Bearer ${accessToken}`
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					uris: formattedTracks
