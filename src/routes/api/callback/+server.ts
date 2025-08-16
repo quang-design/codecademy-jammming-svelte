@@ -66,11 +66,11 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 		// Clear code verifier cookie
 		cookies.delete('code_verifier', { path: '/' });
-
-		// Redirect home
-		throw redirect(302, '/');
 	} catch (error) {
 		console.error('Error getting Spotify access token:', error);
-		return new Response(String(error), { status: 500 });
+		return new Response('Internal Server Error', { status: 500 });
 	}
+
+	// Redirect home
+	return redirect(302, '/');
 };
