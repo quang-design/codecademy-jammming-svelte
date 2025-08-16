@@ -3,6 +3,8 @@
 	import { playlist } from '$lib/utils/user-state.svelte';
 	import { onMount } from 'svelte';
 
+	import type { TrackProps } from '$lib/utils/user-state.svelte';
+
 	let playlistName = $state('Playlist');
 	let isRenaming = $state(false);
 
@@ -49,8 +51,8 @@
 
 	onMount(() => {
 		const localTracks = JSON.parse(localStorage.getItem('playlist') || '[]');
+		localTracks.forEach((track: TrackProps) => playlist.addTrack(track));
 		const localName = localStorage.getItem('playlistName') || 'Playlist';
-		playlistTracks = localTracks;
 		playlistName = localName;
 	});
 </script>
