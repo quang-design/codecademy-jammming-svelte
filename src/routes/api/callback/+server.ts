@@ -1,11 +1,13 @@
 import type { RequestHandler } from './$types';
-import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI } from '$env/static/private';
+import { PUBLIC_SPOTIFY_CLIENT_ID, PUBLIC_SPOTIFY_REDIRECT_URI } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const code = url.searchParams.get('code');
 	const error = url.searchParams.get('error');
+
+	console.log(code, error);
 
 	if (error) {
 		return new Response(error, { status: 400 });
@@ -15,7 +17,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return new Response('No code', { status: 400 });
 	}
 
-	const codeVerifier = cookies.get('code_verifier');
+	const codeVerifier = localStorage.getItem('code_verifier');
 	if (!codeVerifier) {
 		return new Response('No code verifier', { status: 400 });
 	}
@@ -29,8 +31,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			body: new URLSearchParams({
 				grant_type: 'authorization_code',
 				code: code,
-				redirect_uri: SPOTIFY_REDIRECT_URI,
-				client_id: SPOTIFY_CLIENT_ID,
+				redirect_uri: PUBLIC_SPOTIFY_REDIRECT_URI,
+				client_id: PUBLIC_SPOTIFY_CLIENT_ID,
 				code_verifier: codeVerifier
 			})
 		});

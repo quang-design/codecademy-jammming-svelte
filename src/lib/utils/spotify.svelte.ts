@@ -1,4 +1,5 @@
-import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from '$env/static/private';
+import { SPOTIFY_CLIENT_SECRET } from '$env/static/private';
+import { PUBLIC_SPOTIFY_CLIENT_ID } from '$env/static/public';
 import type { SearchContent, Track } from 'spotify-types';
 import type { TrackProps } from './user-state.svelte';
 
@@ -16,11 +17,36 @@ class Spotify {
 		this.tokenExpirationTime = Date.now() + expires_in * 1000;
 	}
 
+	public async getRefreshToken() {
+		const url = 'https://accounts.spotify.com/api/token';
+
+		const payload = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: new URLSearchParams({
+				grant_type: 'refresh_token',
+				refresh_token: this.accessToken!,
+				client_id: PUBLIC_SPOTIFY_CLIENT_ID,
+				client_secret: SPOTIFY_CLIENT_SECRET
+			})
+		};
+
+		const body = await fetch(url, payload);
+		const response = await body.json();
+		console.log(response);
+		this.accessToken = response.access_token;
+		this.tokenExpirationTime = Date.now() + response.expires_in * 1000;
+
+		return response;
+	}
+
 	public async getAccessToken() {
 		if (this.accessToken && !this.isTokenExpired()) {
 			return this.accessToken;
 		}
-		const clientId = SPOTIFY_CLIENT_ID;
+		const clientId = PUBLIC_SPOTIFY_CLIENT_ID;
 		const clientSecret = SPOTIFY_CLIENT_SECRET;
 
 		if (!clientId || !clientSecret) {
@@ -85,26 +111,6 @@ class Spotify {
 			throw error;
 		}
 	}
-
-	public async getCurrentUserProfile() {
-		const accessToken = await this.getAccessToken();
-
-		try {
-			const response = await fetch('https://api.spotify.com/v1/me', {
-				headers: {
-					Authorization: `Bearer ${accessToken}`
-				}
-			});
-
-			const data = await response.json();
-			return data;
-		} catch (error) {
-			console.error('Error getting Spotify user profile:', error);
-			throw error;
-		}
-	}
-
-	public async saveToPlaylist(tracks: TrackProps[]) {}
 }
 
 export const spotify = new Spotify();

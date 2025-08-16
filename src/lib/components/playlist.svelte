@@ -1,9 +1,8 @@
 <script lang="ts">
 	import Tracklist from './tracklist.svelte';
 	import { playlist } from '$lib/utils/user-state.svelte';
+	import { PUBLIC_SPOTIFY_CLIENT_ID, PUBLIC_SPOTIFY_REDIRECT_URI } from '$env/static/public';
 	import { goto } from '$app/navigation';
-
-	let { userId } = $props();
 
 	let playlistName = $state('Playlist');
 	let isRenaming = $state(false);
@@ -15,12 +14,48 @@
 	};
 
 	const onclick = async () => {
-		const response = await fetch('/api/save', {
-			method: 'POST',
-			body: JSON.stringify({ playlist: playlistTracks, playlistName: playlistName })
-		});
-		const data = await response.json();
-		console.log(data);
+		console.log('save to playlist');
+
+		const generateRandomString = (length: number) => {
+			const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+			const values = crypto.getRandomValues(new Uint8Array(length));
+			return values.reduce((acc, x) => acc + possible[x % possible.length], '');
+		};
+
+		const codeVerifier = generateRandomString(64);
+
+		const sha256 = async (plain: string) => {
+			const encoder = new TextEncoder();
+			const data = encoder.encode(plain);
+			return crypto.subtle.digest('SHA-256', data);
+		};
+
+		const base64encode = (input: ArrayBuffer) => {
+			return btoa(String.fromCharCode(...new Uint8Array(input)))
+				.replace(/=/g, '')
+				.replace(/\+/g, '-')
+				.replace(/\//g, '_');
+		};
+
+		const hashed = await sha256(codeVerifier);
+		const codeChallenge = base64encode(hashed);
+
+		localStorage.setItem('code_verifier', codeVerifier);
+
+		const scope =
+			'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+
+		const authUrl = new URL('https://accounts.spotify.com/authorize');
+		const params = {
+			response_type: 'code',
+			client_id: PUBLIC_SPOTIFY_CLIENT_ID,
+			scope,
+			code_challenge_method: 'S256',
+			code_challenge: codeChallenge,
+			redirect_uri: PUBLIC_SPOTIFY_REDIRECT_URI
+		};
+		authUrl.search = new URLSearchParams(params).toString();
+		return (window.location.href = authUrl.toString());
 	};
 </script>
 
