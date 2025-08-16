@@ -3,20 +3,26 @@
 	import { playlist } from '$lib/utils/user-state.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-
-	let { userId } = $props();
+	import { browser } from '$app/environment';
 
 	let playlistName = $state('Playlist');
 	let isRenaming = $state(false);
+	let user_id: string = $state('');
 
 	let playlistTracks = $derived(playlist.getPlaylist());
 
 	const toggleRename = () => {
 		isRenaming = !isRenaming;
+		localStorage.setItem('playlistName', playlistName);
 	};
 
+	if (browser) {
+		const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+		user_id = cookies.find((cookie) => cookie.startsWith('user_id='))?.split('=')[1] || '';
+	}
+
 	const onclick = async () => {
-		if (!userId) {
+		if (!user_id) {
 			goto('/api/login');
 			return;
 		}
@@ -27,7 +33,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				userId,
+				userId: user_id,
 				playlistName,
 				tracks: playlistTracks
 			})
@@ -43,7 +49,9 @@
 
 	onMount(() => {
 		const localTracks = JSON.parse(localStorage.getItem('playlist') || '[]');
+		const localName = localStorage.getItem('playlistName') || 'Playlist';
 		playlistTracks = localTracks;
+		playlistName = localName;
 	});
 </script>
 
