@@ -64,6 +64,29 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			});
 		}
 
+		// Try to fetch the current user's profile to store the user_id for later API calls
+		try {
+			const meRes = await fetch('https://api.spotify.com/v1/me', {
+				headers: { Authorization: `Bearer ${access_token}` }
+			});
+			if (meRes.ok) {
+				const me = await meRes.json();
+				if (me?.id) {
+					cookies.set('user_id', me.id, {
+						httpOnly: true,
+						secure: !dev,
+						maxAge: 30 * 24 * 60 * 60,
+						path: '/',
+						sameSite: 'lax'
+					});
+				}
+			} else {
+				console.warn('Failed to fetch Spotify user profile:', await meRes.text());
+			}
+		} catch (e) {
+			console.warn('Error fetching Spotify user profile:', e);
+		}
+
 		// Clear code verifier cookie
 		cookies.delete('code_verifier', { path: '/' });
 	} catch (error) {
@@ -72,5 +95,5 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	}
 
 	// Redirect home
-	return redirect(302, '/');
+	throw redirect(303, '/');
 };

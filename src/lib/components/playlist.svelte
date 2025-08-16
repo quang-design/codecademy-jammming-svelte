@@ -45,6 +45,8 @@
 		const localTracks = JSON.parse(localStorage.getItem('playlist') || '[]');
 		playlistTracks = localTracks;
 	});
+
+	$inspect(isAuthenticated);
 </script>
 
 <div
