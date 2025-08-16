@@ -7,7 +7,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const code = url.searchParams.get('code');
 	const error = url.searchParams.get('error');
 
-	console.log(code, error);
+	// console.log(code, error);
 
 	if (error) {
 		return new Response(error, { status: 400 });
@@ -17,7 +17,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return new Response('No code', { status: 400 });
 	}
 
-	const codeVerifier = localStorage.getItem('code_verifier');
+	const codeVerifier = cookies.get('code_verifier');
 	if (!codeVerifier) {
 		return new Response('No code verifier', { status: 400 });
 	}
