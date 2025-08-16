@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
-	let { userId, isAuthenticated } = $props();
+	let { userId } = $props();
 
 	let playlistName = $state('Playlist');
 	let isRenaming = $state(false);
@@ -16,7 +16,7 @@
 	};
 
 	const onclick = async () => {
-		if (!isAuthenticated) {
+		if (!userId) {
 			goto('/api/login');
 			return;
 		}
@@ -45,8 +45,6 @@
 		const localTracks = JSON.parse(localStorage.getItem('playlist') || '[]');
 		playlistTracks = localTracks;
 	});
-
-	$inspect(isAuthenticated);
 </script>
 
 <div
