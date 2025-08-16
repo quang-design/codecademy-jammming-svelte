@@ -68,7 +68,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		cookies.delete('code_verifier', { path: '/' });
 
 		// Redirect home
-		return redirect(302, '/');
+		throw redirect(302, '/');
 	} catch (error) {
 		console.error('Error getting Spotify access token:', error);
 		return new Response(String(error), { status: 500 });
