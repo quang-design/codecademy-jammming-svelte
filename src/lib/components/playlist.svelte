@@ -16,11 +16,6 @@
 		localStorage.setItem('playlistName', playlistName);
 	};
 
-	if (browser) {
-		const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
-		user_id = cookies.find((cookie) => cookie.startsWith('user_id='))?.split('=')[1] || '';
-	}
-
 	const onclick = async () => {
 		if (!user_id) {
 			goto('/api/login');
@@ -52,6 +47,11 @@
 		const localName = localStorage.getItem('playlistName') || 'Playlist';
 		playlistTracks = localTracks;
 		playlistName = localName;
+
+		if (browser) {
+			const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+			user_id = cookies.find((cookie) => cookie.startsWith('user_id='))?.split('=')[1] || '';
+		}
 	});
 </script>
 
