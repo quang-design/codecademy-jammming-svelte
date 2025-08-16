@@ -2,13 +2,14 @@
 	import Tracklist from './tracklist.svelte';
 	import { playlist } from '$lib/utils/user-state.svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let { userId, isAuthenticated } = $props();
 
 	let playlistName = $state('Playlist');
 	let isRenaming = $state(false);
 
-	const playlistTracks = $derived(playlist.getPlaylist());
+	let playlistTracks = $derived(playlist.getPlaylist());
 
 	const toggleRename = () => {
 		isRenaming = !isRenaming;
@@ -39,6 +40,11 @@
 			alert('Playlist saved successfully');
 		}
 	};
+
+	onMount(() => {
+		const localTracks = JSON.parse(localStorage.getItem('playlist') || '[]');
+		playlistTracks = localTracks;
+	});
 </script>
 
 <div
